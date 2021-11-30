@@ -19,9 +19,11 @@ try:
 except qbittorrentapi.LoginFailed as e:
     print(e)
 
-checking_torrents = [torrent for torrent in client.torrents_info() if torrent.state_enum.is_checking]
+checking_torrents = [torrent for torrent in client.torrents_info() if torrent.state_enum.is_checking or torrent.state_enum.is_errored]
 for torrent in checking_torrents:
-    pprint.pprint(dict(torrent), indent=4)
+    # List of dictionary values returned from torrents_info()
+    #pprint.pprint(dict(torrent), indent=4)
+
     torrent_path = torrents_backup_path / f"{torrent.hash}.torrent"
     shutil.copy(bt_backup_path / f"{torrent.hash}.torrent", torrent_path)
     client.torrents_delete(torrent_hashes=torrent.hash)
@@ -40,4 +42,3 @@ for torrent in checking_torrents:
             ratio_limit=torrent.ratio_limit,
             seeding_time_limits=torrent.seeding_time_limit
     )
-    print()
